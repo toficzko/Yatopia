@@ -129,7 +129,11 @@ index 0000000000000000000000000000000000000000..fe7330fabe386966c2d203a190a00a78
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+<<<<<<< HEAD
 index df453f790b7cc6dd2831b36de93f68791443edaf..9b1202a60277091ff7e3c87dd318b58449e4207b 100644
+=======
+index 27b39f63fa9c340e0b9f2ed82448c870c40ac5c7..e280afce30ddc0c2ec54945543ad65b4ebfa71f2 100644
+>>>>>>> ver/1.16.5
 --- a/src/main/java/net/minecraft/server/World.java
 +++ b/src/main/java/net/minecraft/server/World.java
 @@ -97,6 +97,8 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
@@ -150,10 +154,10 @@ index df453f790b7cc6dd2831b36de93f68791443edaf..9b1202a60277091ff7e3c87dd318b584
          this.chunkPacketBlockController = this.paperConfig.antiXray ? new ChunkPacketBlockControllerAntiXray(this, executor) : ChunkPacketBlockController.NO_OPERATION_INSTANCE; // Paper - Anti-Xray
          this.generator = gen;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index dfe6777db04bb550ae0e761addd26b2d5abf3baf..48dd6de4acf0ef0536a4c562f3eb5f2f90878924 100644
+index f9fd40d33ac72f859a0a7012dbab348fca40c375..12b92ee0491c82a72d1646d14116e187dd965fe6 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -862,6 +862,7 @@ public final class CraftServer implements Server {
+@@ -866,6 +866,7 @@ public final class CraftServer implements Server {
          com.destroystokyo.paper.PaperConfig.init((File) console.options.valueOf("paper-settings")); // Paper
          com.tuinity.tuinity.config.TuinityConfig.init((File) console.options.valueOf("tuinity-settings")); // Tuinity - Server Config
          net.pl3x.purpur.PurpurConfig.init((File) console.options.valueOf("purpur-settings")); // Purpur
@@ -161,7 +165,7 @@ index dfe6777db04bb550ae0e761addd26b2d5abf3baf..48dd6de4acf0ef0536a4c562f3eb5f2f
          for (WorldServer world : console.getWorlds()) {
              world.worldDataServer.setDifficulty(config.difficulty);
              world.setSpawnFlags(config.spawnMonsters, config.spawnAnimals);
-@@ -898,6 +899,7 @@ public final class CraftServer implements Server {
+@@ -902,6 +903,7 @@ public final class CraftServer implements Server {
              world.paperConfig.init(); // Paper
              world.tuinityConfig.init(); // Tuinity - Server Config
              world.purpurConfig.init(); // Purpur

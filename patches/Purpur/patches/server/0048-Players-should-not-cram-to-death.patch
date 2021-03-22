@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: William Blake Galbreath <blake.galbreath@gmail.com>
+Date: Sun, 21 Jul 2019 18:01:46 -0500
+Subject: [PATCH] Players should not cram to death
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+<<<<<<< HEAD:patches/Purpur/patches/server/0049-Players-should-not-cram-to-death.patch
+index 15543aa202c04e94dcb7d505bc297f19c60d22f0..a206a1f68d4a8da9a44aa00781533ea17e3dfa4b 100644
+=======
+index f200faf78ab887d1b58677e20039765cb67ac6b8..ce48b823db35ca2d7557cfc840801349b19cbd54 100644
+>>>>>>> ver/1.16.5:patches/Purpur/patches/server/0048-Players-should-not-cram-to-death.patch
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -1426,7 +1426,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+ 
+     @Override
+     public boolean isInvulnerable(DamageSource damagesource) {
+-        return super.isInvulnerable(damagesource) || this.H() || this.abilities.isInvulnerable && damagesource == DamageSource.WITHER;
++        return super.isInvulnerable(damagesource) || this.H() || damagesource == DamageSource.CRAMMING || this.abilities.isInvulnerable && damagesource == DamageSource.WITHER; // Purpur
+     }
+ 
+     @Override

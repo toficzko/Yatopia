@@ -5,10 +5,17 @@ Subject: [PATCH] Player invulnerabilities
 
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+<<<<<<< HEAD
 index 2f1121e62b171ed2f8d02e19b1d7620fee4296e4..5d3ef9e0b7c54964b2caba6c45608eda418d3cf7 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
 @@ -1998,5 +1998,26 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+=======
+index 023ca23e8c91a6525cc31d483d873dfe14e97da3..3dd208c763a71f4211b89a32a936a2317555f265 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -2136,5 +2136,26 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+>>>>>>> ver/1.16.5
       * Reset the idle timer back to 0
       */
      void resetIdleTimer();

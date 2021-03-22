@@ -6,7 +6,11 @@ Subject: [PATCH] Optimize some stuff in WorldServer ticking
 Replaced some streams and some array lists with glue lists
 
 diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+<<<<<<< HEAD
 index dd9ae27a208b5e55a1c473eda6e068a0fc3eb64f..17b98bc887598ad5e86a1d7ef5fb3905c92bcb9d 100644
+=======
+index 4e7700443c4f0725c0d032b620f84fcfadbde7a1..e695cf764cab6d64ea5bb00af03b25f4930946dd 100644
+>>>>>>> ver/1.16.5
 --- a/src/main/java/net/minecraft/server/WorldServer.java
 +++ b/src/main/java/net/minecraft/server/WorldServer.java
 @@ -885,12 +885,21 @@ public class WorldServer extends World implements GeneratorAccessSeed {
@@ -48,7 +52,11 @@ index dd9ae27a208b5e55a1c473eda6e068a0fc3eb64f..17b98bc887598ad5e86a1d7ef5fb3905
              long l = this.worldData.getDayTime() + 24000L;
              TimeSkipEvent event = new TimeSkipEvent(this.getWorld(), TimeSkipEvent.SkipReason.NIGHT_SKIP, (l - l % 24000L) - this.getDayTime());
              if (this.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
+<<<<<<< HEAD
 @@ -1114,9 +1121,9 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+=======
+@@ -1115,9 +1122,9 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+>>>>>>> ver/1.16.5
      }
  
      private void wakeupPlayers() {
@@ -60,7 +68,11 @@ index dd9ae27a208b5e55a1c473eda6e068a0fc3eb64f..17b98bc887598ad5e86a1d7ef5fb3905
      }
  
      // Paper start - optimise random block ticking
+<<<<<<< HEAD
 @@ -1904,8 +1911,9 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+=======
+@@ -1920,8 +1927,9 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+>>>>>>> ver/1.16.5
          // Spigot start
          if ( entity instanceof EntityHuman )
          {
@@ -71,7 +83,11 @@ index dd9ae27a208b5e55a1c473eda6e068a0fc3eb64f..17b98bc887598ad5e86a1d7ef5fb3905
                  for (Object o : worldData.data.values() )
                  {
                      if ( o instanceof WorldMap )
+<<<<<<< HEAD
 @@ -1922,7 +1930,7 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+=======
+@@ -1938,7 +1946,7 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+>>>>>>> ver/1.16.5
                          }
                      }
                  }

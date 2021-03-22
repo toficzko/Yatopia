@@ -1,0 +1,96 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Sat, 18 Jul 2020 11:27:43 -0500
+Subject: [PATCH] Populator seed controls
+
+
+diff --git a/src/main/java/co/aikar/timings/TimingsExport.java b/src/main/java/co/aikar/timings/TimingsExport.java
+index 5e672a0660d0aceffcdb26d185590ca18aa4f023..4b171a2a60e24947e884f8988920f335bd99a471 100644
+--- a/src/main/java/co/aikar/timings/TimingsExport.java
++++ b/src/main/java/co/aikar/timings/TimingsExport.java
+@@ -293,7 +293,7 @@ public class TimingsExport extends Thread {
+         JSONObject object = new JSONObject();
+         for (String key : config.getKeys(false)) {
+             String fullKey = (parentKey != null ? parentKey + "." + key : key);
+-            if (fullKey.equals("database") || fullKey.equals("settings.bungeecord-addresses") || TimingsManager.hiddenConfigs.contains(fullKey) || key.startsWith("seed-") || key.equals("worldeditregentempworld")) {
++            if (fullKey.equals("database") || fullKey.equals("settings.bungeecord-addresses") || TimingsManager.hiddenConfigs.contains(fullKey) || key.startsWith("seed-") || key.equals("worldeditregentempworld") || fullKey.contains("worldgen.seeds.populator")) { // Tuinity
+                 continue;
+             }
+             final Object val = config.get(key);
+diff --git a/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java b/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
+<<<<<<< HEAD:patches/Purpur/patches/server/0095-Populator-seed-controls.patch
+index c40335607275771bd7b3c5f1282af71d7f71754d..f65e59c9ee85e0a42d8a12cf66ac3d99f776f5c9 100644
+=======
+index eb53f0a9012884ce2ab6b6d8cfeefaffa3a48ead..8f95c3c22a4f3f90f001e34ded081708ede59454 100644
+>>>>>>> ver/1.16.5:patches/Purpur/patches/server/0092-Populator-seed-controls.patch
+--- a/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
++++ b/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
+@@ -1,5 +1,6 @@
+ package com.tuinity.tuinity.config;
+ 
++import co.aikar.timings.TimingsManager;
+ import com.destroystokyo.paper.util.SneakyThrow;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.TicketType;
+@@ -401,6 +402,19 @@ public final class TuinityConfig {
+             this.spawnLimitAmbient = this.getInt(path + ".ambient", -1);
+         }
+ 
++        public Long populatorSeed;
++        public boolean useRandomPopulatorSeed;
++
++        private void populatorSeed() {
++            final String seedString = this.getString("worldgen.seeds.populator", "default");
++            if (seedString.equalsIgnoreCase("random")) {
++                this.useRandomPopulatorSeed = true;
++            } else if (!seedString.equalsIgnoreCase("default")) {
++                this.populatorSeed = Long.parseLong(seedString);
++            }
++            if (!TimingsManager.hiddenConfigs.contains("worldgen.seeds.populator")) TimingsManager.hiddenConfigs.add("worldgen.seeds.populator");
++        }
++
+     }
+ 
+ }
+\ No newline at end of file
+diff --git a/src/main/java/net/minecraft/server/BiomeBase.java b/src/main/java/net/minecraft/server/BiomeBase.java
+index 3fc101552e3c229076c91a1cfa45206b4cc7a04c..60d5c08706dc8b2f895ff7083d3a611a73ac19d2 100644
+--- a/src/main/java/net/minecraft/server/BiomeBase.java
++++ b/src/main/java/net/minecraft/server/BiomeBase.java
+@@ -227,6 +227,10 @@ public final class BiomeBase {
+         return this.k;
+     }
+ 
++    // Tuinity start - populator seed control
++    private static final java.security.SecureRandom SECURE_RANDOM = new java.security.SecureRandom();
++    // Tuinity end - populator seed control
++
+     public void a(StructureManager structuremanager, ChunkGenerator chunkgenerator, RegionLimitedWorldAccess regionlimitedworldaccess, long i, SeededRandom seededrandom, BlockPosition blockposition) {
+         List<List<Supplier<WorldGenFeatureConfigured<?, ?>>>> list = this.k.c();
+         int j = WorldGenStage.Decoration.values().length;
+@@ -263,12 +267,24 @@ public final class BiomeBase {
+                 }
+             }
+ 
++            // Tuinity start - populator seed control
++            long populatorSeed;
++            WorldServer world = (WorldServer)((ChunkProviderServer)regionlimitedworldaccess.getChunkProvider()).getWorld();
++            if (world.tuinityConfig.useRandomPopulatorSeed) {
++                populatorSeed = SECURE_RANDOM.nextLong();
++            } else if (world.tuinityConfig.populatorSeed != null) {
++                populatorSeed = world.tuinityConfig.populatorSeed.longValue();
++            } else {
++                populatorSeed = i;
++            }
++            // Tuinity end - populator seed control
++
+             if (list.size() > k) {
+                 for (Iterator iterator1 = ((List) list.get(k)).iterator(); iterator1.hasNext(); ++l) {
+                     Supplier<WorldGenFeatureConfigured<?, ?>> supplier = (Supplier) iterator1.next();
+                     WorldGenFeatureConfigured<?, ?> worldgenfeatureconfigured = (WorldGenFeatureConfigured) supplier.get();
+ 
+-                    seededrandom.b(i, l, k);
++                    seededrandom.b(populatorSeed, l, k); // Tuinity - populator seed control - move i up into default branch
+ 
+                     try {
+                         worldgenfeatureconfigured.a(regionlimitedworldaccess, chunkgenerator, seededrandom, blockposition);

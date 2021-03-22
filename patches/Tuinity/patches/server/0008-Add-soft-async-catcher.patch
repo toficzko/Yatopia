@@ -81,34 +81,6 @@ index e7624948ea4aa1a07d84ed3d295cfe2dd354fd14..a263cd7a0680e0cc3517f84308118eb3
          // good thing this is only used in debug reports // TODO check on update
          int ret = 0;
  
-diff --git a/src/main/java/com/tuinity/tuinity/chunk/SingleThreadChunkRegionManager.java b/src/main/java/com/tuinity/tuinity/chunk/SingleThreadChunkRegionManager.java
-index 20150ad0750a648d349701a09b31881be124e46c..cae06962d80cdd00962236891472ba815b0ab8cd 100644
---- a/src/main/java/com/tuinity/tuinity/chunk/SingleThreadChunkRegionManager.java
-+++ b/src/main/java/com/tuinity/tuinity/chunk/SingleThreadChunkRegionManager.java
-@@ -162,6 +162,7 @@ public final class SingleThreadChunkRegionManager<T extends Enum<T> & SingleThre
-     }
- 
-     public void addChunk(final int chunkX, final int chunkZ) {
-+        com.tuinity.tuinity.util.TickThread.ensureTickThread("async region manager add chunk"); // Tuinity
-         this.addChunkTimings.startTiming();
-         try {
-             this.getOrCreateAndMergeSection(chunkX >> REGION_CHUNK_SIZE_SHIFT, chunkZ >> REGION_CHUNK_SIZE_SHIFT, null).addChunk(chunkX, chunkZ);
-@@ -171,6 +172,7 @@ public final class SingleThreadChunkRegionManager<T extends Enum<T> & SingleThre
-     }
- 
-     public void removeChunk(final int chunkX, final int chunkZ) {
-+        com.tuinity.tuinity.util.TickThread.ensureTickThread("async region manager remove chunk"); // Tuinity
-         this.removeChunkTimings.startTiming();
-         try {
-             final RegionSection<T> section = this.regionsBySection.get(
-@@ -187,6 +189,7 @@ public final class SingleThreadChunkRegionManager<T extends Enum<T> & SingleThre
-     }
- 
-     public void recalculateRegions() {
-+        com.tuinity.tuinity.util.TickThread.ensureTickThread("async region recalculation"); // Tuinity
-         for (int i = 0, len = this.needsRecalculation.size(); i < len; ++i) {
-             final Region<T> region = this.needsRecalculation.removeFirst();
- 
 diff --git a/src/main/java/com/tuinity/tuinity/util/TickThread.java b/src/main/java/com/tuinity/tuinity/util/TickThread.java
 index 033548a58d27f64d3954206d267783c0437d4019..08ed243259f052165c6f75aed1d1d65a14219715 100644
 --- a/src/main/java/com/tuinity/tuinity/util/TickThread.java
@@ -212,7 +184,7 @@ index c8c0748628e83b6396c13afe896acc16c85109b0..4082c4f366bce1784759bda773d3d354
          try {
              boolean execChunkTask = com.destroystokyo.paper.io.chunk.ChunkTaskManager.pollChunkWaitQueue() || ChunkProviderServer.this.world.asyncChunkTaskManager.pollNextChunkTask(); // Paper
 diff --git a/src/main/java/net/minecraft/server/EntityTrackerEntry.java b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
-index 3960a975e74ed81c45819fe5e0f01c6c18252982..526c1419af7bd0b6098a8f9a0a24a64ba61c6ebc 100644
+index f2a9396c2ec64c79391782249db7507f12a69a9e..798ebfdcd8e06ffb576964da006e77bd188ad274 100644
 --- a/src/main/java/net/minecraft/server/EntityTrackerEntry.java
 +++ b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
 @@ -74,6 +74,7 @@ public class EntityTrackerEntry {
@@ -220,14 +192,14 @@ index 3960a975e74ed81c45819fe5e0f01c6c18252982..526c1419af7bd0b6098a8f9a0a24a64b
      public final void tick() { this.a(); } // Paper - OBFHELPER
      public void a() {
 +        com.tuinity.tuinity.util.TickThread.softEnsureTickThread("Tracker update"); // Tuinity
-         List<Entity> list = this.tracker.getPassengers();
+         List<Entity> list = this.tracker.passengers; // Paper - do not copy list
  
          if (!list.equals(this.p)) {
 diff --git a/src/main/java/net/minecraft/server/PlayerChunkMap.java b/src/main/java/net/minecraft/server/PlayerChunkMap.java
-index fb46fdeb22a7c31c8d132bdc80d657ae82c191be..2be8c1b7974f3f6271be60872d45123ba9743672 100644
+index a470e8fb8df29f611c13039b7a4f58a114564705..4abd156556b40aa82e6ed5093b279c0f780b9c9c 100644
 --- a/src/main/java/net/minecraft/server/PlayerChunkMap.java
 +++ b/src/main/java/net/minecraft/server/PlayerChunkMap.java
-@@ -200,6 +200,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+@@ -201,6 +201,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
      // Paper end - no-tick view distance
  
      void addPlayerToDistanceMaps(EntityPlayer player) {
@@ -235,7 +207,7 @@ index fb46fdeb22a7c31c8d132bdc80d657ae82c191be..2be8c1b7974f3f6271be60872d45123b
          int chunkX = MCUtil.getChunkCoordinate(player.locX());
          int chunkZ = MCUtil.getChunkCoordinate(player.locZ());
          // Note: players need to be explicitly added to distance maps before they can be updated
-@@ -230,6 +231,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+@@ -231,6 +232,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
      }
  
      void removePlayerFromDistanceMaps(EntityPlayer player) {
@@ -243,7 +215,7 @@ index fb46fdeb22a7c31c8d132bdc80d657ae82c191be..2be8c1b7974f3f6271be60872d45123b
          // Paper start - use distance map to optimise tracker
          for (int i = 0, len = TRACKING_RANGE_TYPES.length; i < len; ++i) {
              this.playerEntityTrackerTrackMaps[i].remove(player);
-@@ -247,6 +249,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+@@ -248,6 +250,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
      }
  
      void updateMaps(EntityPlayer player) {
@@ -251,7 +223,7 @@ index fb46fdeb22a7c31c8d132bdc80d657ae82c191be..2be8c1b7974f3f6271be60872d45123b
          int chunkX = MCUtil.getChunkCoordinate(player.locX());
          int chunkZ = MCUtil.getChunkCoordinate(player.locZ());
          // Note: players need to be explicitly added to distance maps before they can be updated
-@@ -774,6 +777,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+@@ -791,6 +794,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
  
      @Nullable
      private PlayerChunk a(long i, int j, @Nullable PlayerChunk playerchunk, int k) {
@@ -259,7 +231,7 @@ index fb46fdeb22a7c31c8d132bdc80d657ae82c191be..2be8c1b7974f3f6271be60872d45123b
          if (k > PlayerChunkMap.GOLDEN_TICKET && j > PlayerChunkMap.GOLDEN_TICKET) {
              return playerchunk;
          } else {
-@@ -1081,6 +1085,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+@@ -1112,6 +1116,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
      }
  
      protected boolean b() {
@@ -267,7 +239,7 @@ index fb46fdeb22a7c31c8d132bdc80d657ae82c191be..2be8c1b7974f3f6271be60872d45123b
          if (!this.updatingChunksModified) {
              return false;
          } else {
-@@ -1520,6 +1525,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+@@ -1551,6 +1556,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
      }
  
      public void setViewDistance(int i) { // Paper - public
@@ -275,7 +247,7 @@ index fb46fdeb22a7c31c8d132bdc80d657ae82c191be..2be8c1b7974f3f6271be60872d45123b
          int j = MathHelper.clamp(i + 1, 3, 33); // Paper - diff on change, these make the lower view distance limit 2 and the upper 32
  
          if (j != this.viewDistance) {
-@@ -1533,6 +1539,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+@@ -1564,6 +1570,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
  
      // Paper start - no-tick view distance
      public final void setNoTickViewDistance(int viewDistance) {

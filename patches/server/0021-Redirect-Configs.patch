@@ -5,7 +5,7 @@ Subject: [PATCH] Redirect Configs
 
 
 diff --git a/src/main/java/de/minebench/origami/OrigamiConfig.java b/src/main/java/de/minebench/origami/OrigamiConfig.java
-index 15aa603a771c327879a4088609850fb86c6347bd..553d6fafbcabafeb008fcf5b60adb8d1a5ffeb6b 100644
+index 2457b240f3b49dbd5fe0eb603d86418fd65f0205..fa6637caf388c5ed1d3371c6433c8ede6c84d0f3 100644
 --- a/src/main/java/de/minebench/origami/OrigamiConfig.java
 +++ b/src/main/java/de/minebench/origami/OrigamiConfig.java
 @@ -20,6 +20,8 @@ public final class OrigamiConfig {
@@ -39,12 +39,21 @@ index 15aa603a771c327879a4088609850fb86c6347bd..553d6fafbcabafeb008fcf5b60adb8d1
          for (final Method method : clazz.getDeclaredMethods()) {
              if (method.getReturnType() != void.class || method.getParameterCount() != 0 ||
 diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+<<<<<<< HEAD
 index 9c3f16cc4e424fa2293c9b795960110b36b55df4..c2f749e73cd9e175b019ed720a5021f411213624 100644
 --- a/src/main/java/net/minecraft/server/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/DedicatedServer.java
 @@ -184,7 +184,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
          // Yatopia start
          // Configuration moved to org.bukkit.craftbukkit.Main
+=======
+index af7784790fcddc58509f07586f7fd8d2e42e9eee..be95dbd80b1d06795158fd51e66f98154ce490ed 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -196,7 +196,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+             return false;
+         }
+>>>>>>> ver/1.16.5
          // Yatopia end
 -
 +        de.minebench.origami.OrigamiConfig.init((java.io.File) options.valueOf("origami-settings"));
